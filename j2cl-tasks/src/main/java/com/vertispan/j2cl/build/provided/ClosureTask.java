@@ -163,7 +163,9 @@ public class ClosureTask extends TaskFactory {
                         // Bytecode sources will include original input sources
                         // as well as generated input when the jar was built
                         input(p, OutputTypes.BYTECODE)
-                ));
+                ))
+                .distinct() // Removing any duplicates at this point that would otherwise cause wrong collision detection
+                ;
 
         Stream<Input> jsFromJsZips = scope(project.getDependencies(), Dependency.Scope.RUNTIME)
                 .stream()
