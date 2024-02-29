@@ -159,6 +159,7 @@ public class BuildService {
                             .map(Paths::get)
                             .map(DiskCache::hashContents)
                             .flatMap(Collection::stream)
+                            .filter(cacheEntry -> !cacheEntry.getSourcePath().toString().equals(".DS_Store"))
                             .collect(Collectors.toMap(
                                     DiskCache.CacheEntry::getSourcePath,
                                     Function.identity(),
