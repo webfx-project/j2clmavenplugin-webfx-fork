@@ -236,7 +236,8 @@ public abstract class AbstractBuildMojo extends AbstractCacheMojo {
      * @return
      */
     protected Project buildProject(MavenProject mavenProject, Artifact artifact, boolean lookupReactorProjects, ProjectBuilder projectBuilder, ProjectBuildingRequest request, String pluginVersion, LinkedHashMap<String, Project> builtProjects, String classpathScope, List<DependencyReplacement> dependencyReplacements, List<Artifact> extraJsZips) throws ProjectBuildingException {
-        Project finalProject = buildProjectHelper(mavenProject, artifact, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, classpathScope, dependencyReplacements, 0);
+        HashSet<Pair<MavenProject, Artifact>> processedArtifacts = new HashSet<>();
+        Project finalProject = buildProjectHelper(mavenProject, artifact, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, classpathScope, dependencyReplacements, 0, processedArtifacts);
 
         // Attach any jszip dependencies as runtime-only dependencies of the final project
         // Note that this assumes/requires that this is not covered by dependency-replacements
@@ -251,7 +252,7 @@ public abstract class AbstractBuildMojo extends AbstractCacheMojo {
                 if (p == null) {
                     p = resolveNonReactorProjectForArtifact(projectBuilder, request, extraJsZip);
                 }
-                child = buildProjectHelper(p, extraJsZip, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, Artifact.SCOPE_COMPILE_PLUS_RUNTIME, dependencyReplacements, 1);
+                child = buildProjectHelper(p, extraJsZip, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, Artifact.SCOPE_COMPILE_PLUS_RUNTIME, dependencyReplacements, 1, processedArtifacts);
                 child.getDependencies().clear();//ignore default jar deps
             }
             child.markJsZip();
@@ -337,7 +338,15 @@ public abstract class AbstractBuildMojo extends AbstractCacheMojo {
                     // non-reactor project (or we don't want it to be from reactor), build a project for it
                     p = resolveNonReactorProjectForArtifact(projectBuilder, request, mavenDependency);
                 }
-                child = buildProjectHelper(p, mavenDependency, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, Artifact.SCOPE_COMPILE_PLUS_RUNTIME, dependencyReplacements, depth++);
+
+                // Detecting reintroduction of dependencies already processed to prevent infinite loop
+                Pair<MavenProject, Artifact> pair = new Pair<>(mavenProject, mavenDependency);
+                if (processedArtifacts.contains(pair)) {
+                    continue;
+                }
+                processedArtifacts.add(pair);
+
+                child = buildProjectHelper(p, mavenDependency, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, Artifact.SCOPE_COMPILE_PLUS_RUNTIME, dependencyReplacements, depth++, processedArtifacts);
 
                 if (appendDependencies) {
                     mavenDeps.addAll(p.getArtifacts());
