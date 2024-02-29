@@ -106,6 +106,11 @@ public abstract class AbstractBuildMojo extends AbstractCacheMojo {
     private List<DependencyReplacement> defaultDependencyReplacements = Arrays.asList(
             new DependencyReplacement("com.google.jsinterop:base", "com.vertispan.jsinterop:base:" + Versions.VERTISPAN_JSINTEROP_BASE_VERSION),
             new DependencyReplacement("org.realityforge.com.google.jsinterop:base", "com.vertispan.jsinterop:base:" + Versions.VERTISPAN_JSINTEROP_BASE_VERSION),
+            // New GWT groupId (since GWT 2.10)
+            new DependencyReplacement("org.gwtproject:gwt-user", null),
+            new DependencyReplacement("org.gwtproject:gwt-dev", null),
+            new DependencyReplacement("org.gwtproject:gwt-servlet", null),
+            // Old GWT groupId (deprecated but still supported)
             new DependencyReplacement("com.google.gwt:gwt-user", null),
             new DependencyReplacement("com.google.gwt:gwt-dev", null),
             new DependencyReplacement("com.google.gwt:gwt-servlet", null)
@@ -287,7 +292,7 @@ public abstract class AbstractBuildMojo extends AbstractCacheMojo {
         }
     }
 
-    private Project buildProjectHelper(MavenProject mavenProject, Artifact artifact, boolean lookupReactorProjects, ProjectBuilder projectBuilder, ProjectBuildingRequest request, String pluginVersion, LinkedHashMap<String, Project> builtProjects, String classpathScope, List<DependencyReplacement> dependencyReplacements, int depth) throws ProjectBuildingException {
+    private Project buildProjectHelper(MavenProject mavenProject, Artifact artifact, boolean lookupReactorProjects, ProjectBuilder projectBuilder, ProjectBuildingRequest request, String pluginVersion, LinkedHashMap<String, Project> builtProjects, String classpathScope, List<DependencyReplacement> dependencyReplacements, int depth, Set<Pair<MavenProject, Artifact>> processedArtifacts) throws ProjectBuildingException {
         String key = AbstractBuildMojo.key(artifact);
         Project project = new Project(key);
 
