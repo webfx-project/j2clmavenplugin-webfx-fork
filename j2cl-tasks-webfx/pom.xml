@@ -87,7 +87,7 @@
         <dependency>
             <groupId>com.vertispan.j2cl</groupId>
             <artifactId>build-caching</artifactId>
-            <version>${project.version}</version>
+            <version>0.22.0</version>
         </dependency>
 
         <dependency>
