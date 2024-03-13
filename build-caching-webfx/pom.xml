@@ -7,11 +7,12 @@
     <parent>
         <groupId>com.vertispan.j2cl</groupId>
         <artifactId>j2cl-tools</artifactId>
-        <version>0.23-SNAPSHOT</version>
+        <version>0.22.0</version>
     </parent>
 
     <groupId>dev.webfx</groupId>
     <artifactId>build-caching-webfx</artifactId>
+    <version>0.23-SNAPSHOT</version>
 
     <name>Build caching tools</name>
 
