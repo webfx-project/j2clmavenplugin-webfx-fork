@@ -148,7 +148,6 @@
         <version>3.6.4</version>
       </plugin>
 
-<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
@@ -174,7 +173,6 @@
           </environmentVariables>
         </configuration>
       </plugin>
--->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
