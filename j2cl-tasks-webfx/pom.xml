@@ -85,9 +85,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.vertispan.j2cl</groupId>
-            <artifactId>build-caching</artifactId>
-            <version>0.22.0</version>
+            <groupId>dev.webfx</groupId>
+            <artifactId>build-caching-webfx</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

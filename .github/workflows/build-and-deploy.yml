@@ -32,6 +32,15 @@ jobs:
       - name: Install this repository
         run: mvn -B install
 
+      - name: Deploy build-caching-webfx
+        run: |
+          cd build-caching-webfx
+          mvn -B deploy
+          cd ..
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+
       - name: Deploy j2cl-tasks-webfx
         run: |
           cd j2cl-tasks-webfx
