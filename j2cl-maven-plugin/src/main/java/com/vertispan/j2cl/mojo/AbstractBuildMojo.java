@@ -236,7 +236,7 @@ public abstract class AbstractBuildMojo extends AbstractCacheMojo {
      * @return
      */
     protected Project buildProject(MavenProject mavenProject, Artifact artifact, boolean lookupReactorProjects, ProjectBuilder projectBuilder, ProjectBuildingRequest request, String pluginVersion, LinkedHashMap<String, Project> builtProjects, String classpathScope, List<DependencyReplacement> dependencyReplacements, List<Artifact> extraJsZips) throws ProjectBuildingException {
-        HashSet<Pair<MavenProject, Artifact>> processedArtifacts = new HashSet<>();
+        HashSet<ProcessedDependency> processedArtifacts = new HashSet<>();
         Project finalProject = buildProjectHelper(mavenProject, artifact, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, classpathScope, dependencyReplacements, 0, processedArtifacts);
 
         // Attach any jszip dependencies as runtime-only dependencies of the final project
@@ -293,7 +293,7 @@ public abstract class AbstractBuildMojo extends AbstractCacheMojo {
         }
     }
 
-    private Project buildProjectHelper(MavenProject mavenProject, Artifact artifact, boolean lookupReactorProjects, ProjectBuilder projectBuilder, ProjectBuildingRequest request, String pluginVersion, LinkedHashMap<String, Project> builtProjects, String classpathScope, List<DependencyReplacement> dependencyReplacements, int depth, Set<Pair<MavenProject, Artifact>> processedArtifacts) throws ProjectBuildingException {
+    private Project buildProjectHelper(MavenProject mavenProject, Artifact artifact, boolean lookupReactorProjects, ProjectBuilder projectBuilder, ProjectBuildingRequest request, String pluginVersion, LinkedHashMap<String, Project> builtProjects, String classpathScope, List<DependencyReplacement> dependencyReplacements, int depth, Set<ProcessedDependency> processedDependencies) throws ProjectBuildingException {
         String key = AbstractBuildMojo.key(artifact);
         Project project = new Project(key);
 
@@ -339,14 +339,14 @@ public abstract class AbstractBuildMojo extends AbstractCacheMojo {
                     p = resolveNonReactorProjectForArtifact(projectBuilder, request, mavenDependency);
                 }
 
-                // Detecting reintroduction of dependencies already processed to prevent infinite loop
-                Pair<MavenProject, Artifact> pair = new Pair<>(mavenProject, mavenDependency);
-                if (processedArtifacts.contains(pair)) {
+                // Detecting recurring dependencies to prevent infinite loop
+                ProcessedDependency processedDependency = new ProcessedDependency(mavenProject, mavenDependency);
+                if (processedDependencies.contains(processedDependency)) {
                     continue;
                 }
-                processedArtifacts.add(pair);
+                processedDependencies.add(processedDependency);
 
-                child = buildProjectHelper(p, mavenDependency, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, Artifact.SCOPE_COMPILE_PLUS_RUNTIME, dependencyReplacements, depth++, processedArtifacts);
+                child = buildProjectHelper(p, mavenDependency, lookupReactorProjects, projectBuilder, request, pluginVersion, builtProjects, Artifact.SCOPE_COMPILE_PLUS_RUNTIME, dependencyReplacements, depth++, processedDependencies);
 
                 if (appendDependencies) {
                     mavenDeps.addAll(p.getArtifacts());
