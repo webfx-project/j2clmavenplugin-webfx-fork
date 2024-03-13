@@ -94,6 +94,7 @@
         <dependency>
             <groupId>com.google.turbine</groupId>
             <artifactId>turbine</artifactId>
+            <version>0.2.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.protobuf</groupId>
