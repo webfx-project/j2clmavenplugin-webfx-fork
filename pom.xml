@@ -71,10 +71,16 @@
   </scm>
 
   <modules>
+<!--
     <module>build-caching</module>
     <module>j2cl-tasks</module>
     <module>j2cl-maven-plugin</module>
+-->
+    <module>j2cl-tasks-webfx</module>
+    <module>j2cl-maven-plugin-webfx</module>
+<!--
     <module>j2cl-archetypes</module>
+-->
   </modules>
 
   <properties>
@@ -356,6 +362,7 @@
         <artifactId>maven-site-plugin</artifactId>
         <version>3.11.0</version>
       </plugin>
+<!--
       <plugin>
         <groupId>com.mycila</groupId>
         <artifactId>license-maven-plugin</artifactId>
@@ -385,6 +392,7 @@
           </execution>
         </executions>
       </plugin>
+-->
     </plugins>
     <pluginManagement>
       <plugins>
